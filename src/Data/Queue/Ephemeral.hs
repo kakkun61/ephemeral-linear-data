@@ -1,5 +1,6 @@
-{-# LANGUAGE Strict #-}
+{-# LANGUAGE GADTs #-}
 {-# LANGUAGE LinearTypes #-}
+{-# LANGUAGE Strict #-}
 
 module Data.Queue.Ephemeral
   ( Queue ()
@@ -7,33 +8,38 @@ module Data.Queue.Ephemeral
   , null
   , enqueue
   , dequeue
-  , remove
   ) where
 
+import qualified Prelude as P
 import Prelude hiding (null)
-import qualified Prelude
-import qualified Prelude.Linear as LP
+import qualified Prelude.Linear as PL
+import Prelude.Linear (Consumable, Dupable, Movable, Ur (Ur), lseq)
 
-data Queue a =
-  Queue [a] [a]
+data Queue a where
+  Queue :: [a] -> [a] -> Queue a
   deriving (Show, Eq, Ord)
 
-empty :: (Queue a #-> b) -> b
-empty f = f LP.$ Queue [] []
+instance Consumable a => Consumable (Queue a) where
+  consume (Queue l m) = l `lseq` m `lseq` ()
 
-null :: Queue a -> Bool
-null (Queue l _) = Prelude.null l
+instance Consumable a => Dupable (Queue a) where
+  dup2 (Queue l m) = let q = Queue l m in (q, q)
 
-enqueue :: a -> Queue a -> (Queue a #-> b) -> b
-enqueue a (Queue l m) f = f LP.$ check l $ a:m
+instance Consumable a => Movable (Queue a) where
+  move (Queue l m) = Ur (Queue l m)
 
-dequeue :: Queue a -> Maybe a
-dequeue (Queue (a:_) _) = Just a
-dequeue _ = Nothing
+empty :: (Queue a #-> b) #-> b
+empty f = f (Queue [] [])
 
-remove :: Queue a -> (Maybe (Queue a) #-> b) -> b
-remove (Queue (_:l) m) f = f LP.$ Just $ check l m
-remove _ f = f Nothing
+null :: Queue a #-> Bool
+null (Queue l _) = P.null l
+
+enqueue :: a -> Queue a #-> (Queue a #-> b) #-> b
+enqueue a (Queue l m) f = f (check l (a:m))
+
+dequeue :: Queue a #-> (Maybe (a, Queue a) #-> b) #-> b
+dequeue (Queue (a:l) m) f = f (Just (a, check l m))
+dequeue (Queue _ _) f = f Nothing
 
 check :: [a] -> [a] -> Queue a
 check [] m = Queue (reverse m) []
