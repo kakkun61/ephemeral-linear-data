@@ -17,16 +17,10 @@ import Prelude.Linear (Consumable, Dupable, Movable, Ur (Ur), lseq)
 
 data Queue a where
   Queue :: [a] -> [a] -> Queue a
-  deriving (Show, Eq, Ord)
+  deriving (Show)
 
 instance Consumable a => Consumable (Queue a) where
   consume (Queue l m) = l `lseq` m `lseq` ()
-
-instance Consumable a => Dupable (Queue a) where
-  dup2 (Queue l m) = let q = Queue l m in (q, q)
-
-instance Consumable a => Movable (Queue a) where
-  move (Queue l m) = Ur (Queue l m)
 
 empty :: (Queue a #-> b) #-> b
 empty f = f (Queue [] [])
