@@ -13,7 +13,7 @@ module Data.Queue.Ephemeral
 import qualified Prelude as P
 import Prelude hiding (null)
 import qualified Prelude.Linear as PL
-import Prelude.Linear (Consumable, Dupable, Movable, Ur (Ur), lseq)
+import Prelude.Linear (Consumable, lseq)
 
 data Queue a where
   Queue :: [a] -> [a] -> Queue a
