@@ -19,7 +19,7 @@ type K r m a = a #-> m r
 
 type C r m a = K r m a #-> m r
 
-data ContT r m a = ContT { runContT :: C r m a }
+newtype ContT r m a = ContT { runContT :: C r m a }
 
 type Cont r a = ContT r Identity a
 
