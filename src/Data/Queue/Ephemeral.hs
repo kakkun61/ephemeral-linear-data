@@ -25,8 +25,8 @@ instance Consumable a => Consumable (Queue a) where
 empty :: (Queue a #-> b) #-> b
 empty f = f (Queue [] [])
 
-null :: Queue a #-> Bool
-null (Queue l _) = P.null l
+null :: Queue a #-> ((Bool, Queue a) #-> b) #-> b
+null (Queue l m) f = f (P.null l, Queue l m)
 
 enqueue :: a -> Queue a #-> (Queue a #-> b) #-> b
 enqueue a (Queue l m) f = f (check l (a:m))
