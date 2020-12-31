@@ -6,3 +6,6 @@ source-repository-package
   type: git
   location: https://github.com/tweag/linear-base.git
   tag: 341007891ae77959ac7b147f008e3a1d9c46e96b
+
+package ephemeral-linear-data
+  test-show-details: direct

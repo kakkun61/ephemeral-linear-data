@@ -13,7 +13,7 @@ module Data.Queue.Ephemeral
 import qualified Prelude as P
 import Prelude hiding (null)
 import qualified Prelude.Linear as PL
-import Prelude.Linear (Consumable, lseq)
+import Prelude.Linear (Consumable, Ur (Ur), lseq)
 
 data Queue a where
   Queue :: [a] -> [a] -> Queue a
@@ -22,18 +22,18 @@ data Queue a where
 instance Consumable a => Consumable (Queue a) where
   consume (Queue l m) = l `lseq` m `lseq` ()
 
-empty :: (Queue a #-> b) #-> b
+empty :: (Queue a #-> Ur b) #-> Ur b
 empty k = k (Queue [] [])
 
-null :: Queue a #-> ((Bool, Queue a) #-> b) #-> b
-null (Queue l m) k = k (P.null l, Queue l m)
+null :: Queue a #-> (Ur Bool, Queue a)
+null (Queue l m) = (Ur (P.null l), Queue l m)
 
-enqueue :: a -> Queue a #-> (Queue a #-> b) #-> b
-enqueue a (Queue l m) k = k (check l (a:m))
+enqueue :: a -> Queue a #-> Queue a
+enqueue a (Queue l m) = check l (a:m)
 
-dequeue :: Queue a #-> (Maybe (a, Queue a) #-> b) #-> b
-dequeue (Queue (a:l) m) k = k (Just (a, check l m))
-dequeue (Queue _ _) k = k Nothing
+dequeue :: Queue a #-> (Ur (Maybe a), Queue a)
+dequeue (Queue (a:l) m) = (Ur (Just a), check l m)
+dequeue (Queue l m) = (Ur Nothing, Queue l m)
 
 check :: [a] -> [a] -> Queue a
 check [] m = Queue (reverse m) []
