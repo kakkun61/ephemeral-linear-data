@@ -22,16 +22,16 @@ data Queue a where
 instance Consumable a => Consumable (Queue a) where
   consume (Queue l m) = l `lseq` m `lseq` ()
 
-empty :: (Queue a #-> Ur b) #-> Ur b
+empty :: (Queue a %1 -> Ur b) %1 -> Ur b
 empty k = k (Queue [] [])
 
-null :: Queue a #-> (Ur Bool, Queue a)
+null :: Queue a %1 -> (Ur Bool, Queue a)
 null (Queue l m) = (Ur (P.null l), Queue l m)
 
-enqueue :: a -> Queue a #-> Queue a
+enqueue :: a -> Queue a %1 -> Queue a
 enqueue a (Queue l m) = check l (a:m)
 
-dequeue :: Queue a #-> (Ur (Maybe a), Queue a)
+dequeue :: Queue a %1 -> (Ur (Maybe a), Queue a)
 dequeue (Queue (a:l) m) = (Ur (Just a), check l m)
 dequeue (Queue l m) = (Ur Nothing, Queue l m)
 

@@ -14,14 +14,14 @@ spec :: Spec
 spec = do
   it "empty" $ do
     let
-      f :: Queue () #-> Ur ()
+      f :: Queue () %1 -> Ur ()
       f q = q `lseq` Ur ()
       Ur a = empty f
     a `shouldBe` ()
 
   it "empty → null" $ do
     let
-      f :: Queue () #-> Ur Bool
+      f :: Queue () %1 -> Ur Bool
       f q =
         null q PL.& \(n, q) ->
         q `lseq` n
@@ -30,7 +30,7 @@ spec = do
 
   it "empty → enqueue" $ do
     let
-      f :: Queue () #-> Ur ()
+      f :: Queue () %1 -> Ur ()
       f q =
         enqueue () q PL.& \q ->
         q `lseq` Ur ()
@@ -39,7 +39,7 @@ spec = do
 
   it "empty → enqueue → dequeue" $ do
     let
-      f :: Queue Int #-> Ur Int
+      f :: Queue Int %1 -> Ur Int
       f q =
         enqueue 0 q PL.& \q ->
         dequeue q PL.& \(Ur (Just a), q) ->
