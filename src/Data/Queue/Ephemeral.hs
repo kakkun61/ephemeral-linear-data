@@ -20,7 +20,7 @@ data Queue a where
   deriving (Show)
 
 instance Consumable a => Consumable (Queue a) where
-  consume (Queue l m) = l `lseq` m `lseq` ()
+  consume (Queue l m) = ()
 
 empty :: (Queue a %1 -> Ur b) %1 -> Ur b
 empty k = k (Queue [] [])
