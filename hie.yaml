@@ -1,0 +1,7 @@
+cradle:
+  cabal:
+    - path: "./src"
+      component: "lib:ephemeral-linear-data"
+
+    - path: "./spec"
+      component: "ephemeral-linear-data:test:spec"
