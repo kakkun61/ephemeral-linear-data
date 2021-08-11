@@ -28,6 +28,16 @@ spec = do
       Ur n = empty f
     n `shouldBe` True
 
+  it "empty → null 2" $ do
+    let
+      f :: Queue () %1 -> Ur (Bool, Bool)
+      f q =
+        null q PL.& \(n, q) ->
+        q `lseq` Ur (n, n)
+      Ur (n, n') = empty f
+    n `shouldBe` True
+    n' `shouldBe` True
+
   it "empty → enqueue" $ do
     let
       f :: Queue () %1 -> Ur ()

@@ -13,14 +13,14 @@ module Data.Queue.Ephemeral
 import qualified Prelude as P
 import Prelude hiding (null)
 import qualified Prelude.Linear as PL
-import Prelude.Linear (Consumable, Ur (Ur), lseq)
+import Prelude.Linear (Consumable, Ur (Ur))
 
 data Queue a where
   Queue :: [a] -> [a] -> Queue a
   deriving (Show)
 
 instance Consumable a => Consumable (Queue a) where
-  consume (Queue l m) = ()
+  consume (Queue _ _) = ()
 
 empty :: (Queue a %1 -> Ur b) %1 -> Ur b
 empty k = k (Queue [] [])
